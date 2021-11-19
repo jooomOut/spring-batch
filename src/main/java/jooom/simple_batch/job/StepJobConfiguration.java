@@ -21,7 +21,7 @@ public class StepJobConfiguration {
 
     @Bean
     public Job stepTestJob() {
-        return jobBuilderFactory.get("moveUserData")
+        return jobBuilderFactory.get("stepTestJob")
                 .start(step1())
                 .next(step2())
                 .build();
