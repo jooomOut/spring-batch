@@ -25,6 +25,7 @@ public class SimpleJobConfiguration {
     public Job moveUserData() {
         return jobBuilderFactory.get("moveUserData")
                 .start(getData(null))
+                .next(modifyData(null))
                 .build();
 
     }
@@ -40,5 +41,15 @@ public class SimpleJobConfiguration {
                 })
                 .build();
     }
-
+    @Bean
+    @JobScope
+    public Step modifyData(@Value("#{jobParameters[requestDate]}") String requestData){
+        return stepBuilderFactory.get("modifyData")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info(">>>> START modifyData");
+                    log.info(">>>> requestDate = {}", requestData);
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+    }
 }
