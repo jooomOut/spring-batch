@@ -1,5 +1,6 @@
 package jooom.simple_batch.job;
 
+import jooom.simple_batch.User.Item;
 import jooom.simple_batch.User.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,13 @@ public class JpaPagingItemReaderJobConfiguration {
     public ItemProcessor<User, User> jpaItemProcessor() {
         return user -> {
             user.setCount(user.getCount() == null ? 1 : user.getCount() + 1);
-            log.info("Processed User is: {}", user);
+            /*user.addItem(Item.builder()
+                            .name(user.getUsername() + "_iphone")
+                    .build());
+            user.addItem(Item.builder()
+                    .name(user.getUsername() + "_ipad")
+                    .build());*/
+            log.info("Processed User item: {}", user.getItems().toString());
             return user;
         };
     }

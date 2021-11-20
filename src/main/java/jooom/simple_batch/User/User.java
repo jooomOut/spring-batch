@@ -2,12 +2,10 @@ package jooom.simple_batch.User;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@ToString
 @Entity
 @Builder
 @NoArgsConstructor
@@ -16,7 +14,7 @@ import javax.persistence.Id;
 public class User {
 
     @Id @GeneratedValue
-    @Column(name = "id", nullable = false)
+    @Column(name = "USER_ID", nullable = false)
     private Long id;
 
     private String username;
@@ -27,4 +25,15 @@ public class User {
 
     @Builder.Default
     private Integer count = 0;
+
+    // 한 번에 생성하고 저장하는 경우, cascade 추가 안하면 item 이 저장되지 않는다.
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Item> items = new ArrayList<>();
+
+    public void addItem(Item item) {
+        if (!items.contains(item)){
+            items.add(item);
+            item.setUser(this);
+        }
+    }
 }
