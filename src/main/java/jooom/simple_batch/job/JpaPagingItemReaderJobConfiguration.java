@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaItemWriter;
@@ -17,6 +18,7 @@ import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilde
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -39,13 +41,14 @@ public class JpaPagingItemReaderJobConfiguration {
     @Bean
     public Job jpaPagingItemReaderJob() {
         return jobBuilderFactory.get("jpaPagingItemReaderJob")
-                .start(jpaPagingItemReaderStep(null))
+                .start(jpaPagingItemReaderStep())
+                .incrementer(new RunIdIncrementer()) // 파라미터 변경 없이 재실행할 수 있는 옵션
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step jpaPagingItemReaderStep(@Value("#{jobParameters[version]}") String version) {
+    public Step jpaPagingItemReaderStep() {
         return stepBuilderFactory.get("jpaPagingItemReaderStep")
                 .<User, User>chunk(CHUNK_SIZE) // <Reader의 반환 타입, Writer의 파라미터 타입>
                 .reader(jpaPagingItemReader())
