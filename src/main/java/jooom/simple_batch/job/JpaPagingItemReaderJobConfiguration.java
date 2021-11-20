@@ -6,10 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,15 +39,17 @@ public class JpaPagingItemReaderJobConfiguration {
     @Bean
     public Job jpaPagingItemReaderJob() {
         return jobBuilderFactory.get("jpaPagingItemReaderJob")
-                .start(jpaPagingItemReaderStep())
+                .start(jpaPagingItemReaderStep(null))
                 .build();
     }
 
     @Bean
-    public Step jpaPagingItemReaderStep() {
+    @JobScope
+    public Step jpaPagingItemReaderStep(@Value("#{jobParameters[version]}") String version) {
         return stepBuilderFactory.get("jpaPagingItemReaderStep")
                 .<User, User>chunk(CHUNK_SIZE) // <Reader의 반환 타입, Writer의 파라미터 타입>
                 .reader(jpaPagingItemReader())
+                .processor(jpaItemProcessor())
                 .writer(jpaPagingItemWriter())
                 .build();
     }
@@ -57,11 +64,19 @@ public class JpaPagingItemReaderJobConfiguration {
                 .build();
     }
 
-    private ItemWriter<User> jpaPagingItemWriter() {
-        return list -> {
-            for (User User: list) {
-                log.info("Current User={}", User);
-            }
+    @Bean
+    public ItemProcessor<User, User> jpaItemProcessor() {
+        return user -> {
+            user.setCount(user.getCount() == null ? 1 : user.getCount() + 1);
+            log.info("Processed User is: {}", user);
+            return user;
         };
+    }
+
+    @Bean
+    public JpaItemWriter<User> jpaPagingItemWriter() {
+        JpaItemWriter<User> writer = new JpaItemWriter<>();
+        writer.setEntityManagerFactory(entityManagerFactory);
+        return writer;
     }
 }
