@@ -25,4 +25,6 @@ public class User {
     private String email;
     private String major;
 
+    @Builder.Default
+    private Integer count = 0;
 }
