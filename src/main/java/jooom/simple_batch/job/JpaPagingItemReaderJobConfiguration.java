@@ -64,7 +64,7 @@ public class JpaPagingItemReaderJobConfiguration {
                 .name("jpaPagingItemReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(CHUNK_SIZE)
-                .queryString("SELECT u FROM User u")
+                .queryString("SELECT u FROM User u join fetch u.items")
                 .build();
     }
 
