@@ -22,6 +22,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.persistence.EntityManagerFactory;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * Step에서 Read, Write를 사용하고
@@ -42,14 +46,26 @@ public class JpaPagingItemReaderJobConfiguration {
     @Bean
     public Job jpaPagingItemReaderJob() {
         return jobBuilderFactory.get("jpaPagingItemReaderJob")
-                .start(jpaPagingItemReaderStep())
+                .start(jpaPagingItemReaderStep(null))
                 .incrementer(new RunIdIncrementer()) // 파라미터 변경 없이 재실행할 수 있는 옵션
                 .build();
     }
 
+
+    /*
+    * 파라미터는 Step이 아니라 내부 Reader, Processor에서 바로 받아서 사용할 수 있다.
+    * */
     @Bean
     @JobScope
-    public Step jpaPagingItemReaderStep() {
+    public Step jpaPagingItemReaderStep(@Value("#{jobParameters[createTime]}") Long createTime) {
+        if (createTime != null) {
+            Date createData = new Date(createTime);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String createTimeStr = dateFormat.format(createData);
+
+            log.info("DATE is : " + createTimeStr);
+        }
+
         return stepBuilderFactory.get("jpaPagingItemReaderStep")
                 .<User, User>chunk(CHUNK_SIZE) // <Reader의 반환 타입, Writer의 파라미터 타입>
                 .reader(jpaPagingItemReader())
