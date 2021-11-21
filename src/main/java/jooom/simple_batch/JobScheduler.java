@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -27,9 +28,9 @@ public class JobScheduler {
     public void runJob() {
         log.info("RUN Scheduler");
 
-        Map<String, JobParameter> confMap = new HashMap<>();
-        confMap.put("version", new JobParameter(System.currentTimeMillis()));
-        JobParameters jobParameters = new JobParameters(confMap);
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("createTime", System.currentTimeMillis())
+                .toJobParameters();
 
         try {
             jobLauncher.run(jpaPagingItemReaderJobConfiguration.jpaPagingItemReaderJob(), jobParameters);
