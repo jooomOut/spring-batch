@@ -1,4 +1,4 @@
-package jooom.simple_batch.User;
+package jooom.simple_batch.primary.model;
 
 import lombok.*;
 

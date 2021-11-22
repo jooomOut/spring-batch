@@ -1,5 +1,7 @@
-package jooom.simple_batch.User;
+package jooom.simple_batch.primary.service;
 
+import jooom.simple_batch.primary.model.User;
+import jooom.simple_batch.primary.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
