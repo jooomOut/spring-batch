@@ -1,4 +1,4 @@
-package jooom.simple_batch;
+package jooom.simple_batch.job;
 
 import jooom.simple_batch.job.JpaPagingItemReaderJobConfiguration;
 import lombok.RequiredArgsConstructor;
