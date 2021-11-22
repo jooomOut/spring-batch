@@ -1,8 +1,8 @@
 package jooom.simple_batch.job;
 
 import jooom.simple_batch.TestBatchConfig;
-import jooom.simple_batch.User.User;
-import jooom.simple_batch.User.UserRepository;
+import jooom.simple_batch.primary.model.User;
+import jooom.simple_batch.primary.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.core.BatchStatus;
