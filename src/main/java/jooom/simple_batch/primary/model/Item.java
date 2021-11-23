@@ -9,6 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
+@Table(name  = "item")
 public class Item {
 
     @Id @GeneratedValue

@@ -1,8 +1,15 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/spring_batch
-    username: root
-    password: toor
+    hikari:
+      primary:
+        jdbcUrl: jdbc:mysql://localhost:3306/spring_batch
+        username: root
+        password: toor
+
+      secondary:
+        jdbcUrl: jdbc:postgresql://localhost:5432/postgres
+        username: postgres
+        password: pass
 
   jpa:
     hibernate:
